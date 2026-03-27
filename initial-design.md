@@ -20,7 +20,7 @@ Create a Discord bot that lets server members predict winners of sports games, e
 - **Picks** (user_id, game_id, selected_team)
 - **Games** (game_id, teams, start_time, result)
   
-![ERD Sketch](images/erd-sketch.png) 
+<img src="images/erd-sketch.png" alt="ERD Sketch" width="700"/>
 
 ★ One user can have many picks (1:N)  
 ★ One game can have many picks (1:N)  
@@ -33,7 +33,7 @@ Create a Discord bot that lets server members predict winners of sports games, e
 - Optional Redis cache for live data  
 - Optional AI service for predictions  
 
-![Rough System Design Diagram](images/system-design-diagram.png) 
+<img src="images/system-design-diagram.png" alt="System Diagram" height="300"/>
 
 ★ Discord Bot → central piece, handles commands and messages  
 ★ Database → stores users, picks, scores  
