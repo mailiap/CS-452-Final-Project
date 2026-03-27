@@ -52,3 +52,6 @@ Create a Discord bot that lets server members predict winners of sports games, e
 | 4/7       | Scoring system & leaderboard |
 | 4/10      | Optional AI predictions / summaries |
 | 4/13      | Polish, error handling, UX tweaks |
+
+## 5. UX Sketch
+<img src="images/ux-sketch.png" alt="UX Sketch" height="500"/>
