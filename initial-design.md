@@ -12,7 +12,6 @@ Create a Discord bot that lets server members predict winners of sports games, e
 - Make it fun and easy to use for sports fans  
 
 ## 2. Initial ERD (Entity Relationship Diagram)
-**Entities:**  
 - **Users** (user_id, username, total_points)
 - **Picks** (user_id, game_id, selected_team)
 - **Games** (game_id, teams, start_time, result)
