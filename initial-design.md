@@ -40,3 +40,15 @@ Create a Discord bot that lets server members predict winners of sports games, e
 ★ Sports API → gets games, results  
 ★ AI Service → optional predictions or summaries  
 ★ Redis → optional cache for fast access
+
+## 4. Initial Daily Goals (March 27 – End of Class)
+| Date       | Goal |
+|-----------|------|
+| 3/27      | Draft project idea & sketches (completed) |
+| 3/30      | Set up tech stack (bot repo, API keys, DB) |
+| 3/31      | Fetch games from API & display in Discord |
+| 4/2       | Implement pick command & store in DB |
+| 4/6       | Add pick locking when game starts |
+| 4/7       | Scoring system & leaderboard |
+| 4/10      | Optional AI predictions / summaries |
+| 4/13      | Polish, error handling, UX tweaks |
