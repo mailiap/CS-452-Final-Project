@@ -1,17 +1,17 @@
 {
-  "name": "discord-pickem-sports-bot",
+  "name": "discord-party-bot",
   "private": true,
   "version": "1.0.0",
-  "description": "Sports Picking",
+  "description": "Game Hub",
   "main": "app.js",
   "type": "module",
   "engines": {
     "node": ">=18.x"
   },
   "scripts": {
-    "start": "node app.js",
-    "register": "node command.js",
-    "dev": "nodemon app.js"
+    "start": "node src/app.js",
+    "register": "node src/command.js",
+    "dev": "nodemon src/app.js"
   },
   "author": "Shay DeWael",
   "license": "MIT",
