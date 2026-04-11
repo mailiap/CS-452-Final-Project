@@ -1,33 +1,33 @@
-# Discord Sports Pick’em Bot
+# Discord Party Game Bot
 
 ## Overview
-A bot where people in a Discord server can predict game winners, earn points, and compete on a leaderboard. Basically ESPN Pick’em, but built into Discord so it’s easier and more social.
+A social Discord bot where users can participate in fun party-style games, challenges, and activities to earn points, level up, and compete on a server leaderboard. Think of it as a mix of mini-games, engagement rewards, and social interaction all inside Discord.
 
 ---
 
 ## Technology
 - Discord bot (Node.js or Python)
-- Sports API (ESPN)  
-- Database (PostgreSQL or MongoDB)
-- Maybe Redis for caching
-- OpenAI for AI predictions
+- Database (PostgreSQL or MongoDB) for users, points, and stats
+- Optional Redis for caching cooldowns and daily/weekly/monthly resets
+- External APIs for trivia questions
 
 ---
 
 ## Goals
-- Display current games in the Discord server  
-- Allow users to make picks for games  
-- Automatically lock picks when games start  
-- Track scores and maintain a leaderboard  
-- (Stretch) Use AI to provide game predictions and improve user experience  
+- Provide daily, weekly, and monthly activities users can participate in
+- Allow users to earn points through games, trivia, and challenges
+- Enforce cooldowns (daily/weekly/monthly limits) for certain commands
+- Track user scores and maintain a live leaderboard
+- Include fun party-style commands (games, trivia, random challenges, etc.)
 
 ---
 
 ## Why This Project?
-I enjoy sports and Discord is a highly social platform, making this something I would actually use. This project also gives me experience with:  
-- APIs and real-time data  
-- Database management  
-- AI integration  
-- Building interactive social applications  
+I enjoy building interactive Discord communities and wanted to create something that makes servers more fun and engaging. This project helps me gain experience with:
+- Discord bot development
+- Working with databases and user state tracking
+- Cooldown and reward systems (game design logic)
+- API integration and dynamic content
+- Building social and engagement-based applications
 
 ---
