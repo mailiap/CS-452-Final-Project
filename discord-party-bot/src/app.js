@@ -170,7 +170,7 @@ app.post(
 
               `**/trivia [category]**\n` +
               `Start a trivia game\n` +
-              `Categories: general, sports, food, geography, music\n\n` +
+              `Categories: general, sports, food, geography, music, history\n\n` +
 
               `**/leaderboard**\n` +
               `View top players\n\n` +
