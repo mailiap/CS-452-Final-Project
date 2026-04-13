@@ -1,4 +1,4 @@
-# Discord Sports Pick’em Bot — Project Log
+# Discord Party Bot — Project Log
 
 | Date       | What                           | Hours |
 |-----------|--------------------------------|-------|
