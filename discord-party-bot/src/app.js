@@ -47,12 +47,21 @@ client.login(process.env.DISCORD_BOT_TOKEN);
 // ================= GAME STATE =================
 const activeGames = new Map();
 
+// ================= ECONOMY SYSTEM =================
+const GAME_REWARDS = {
+  trivia: 2,
+  riddle: 2,
+  scramble: 3,
+  math: 4,
+  rps: 1,
+};
+
 // ================= TIME CONSTANTS =================
 const DAY = 24 * 60 * 60 * 1000;
 const WEEK = 7 * DAY;
 const MONTH = 30 * DAY;
 
-// ================= CATEGORY MAP =================
+// ================= CATEGORIES =================
 const categories = {
   general: 9,
   sports: 21,
@@ -89,20 +98,19 @@ async function generateTrivia(categoryId = 9) {
   };
 }
 
-// ================= RIDDLE API =================
+// ================= RIDDLE FUNCTION =================
 function generateRiddle() {
   return riddles[Math.floor(Math.random() * riddles.length)];
 }
 
-// ================= SCRAMBLE API =================
+// ================= SCRAMBLE =================
 async function generateScramble() {
   const res = await axios.get(
-    'https://random-word-api.herokuapp.com/word'
+    'https://random-word-api.herokuapp.com/word?diff=1'
   );
 
   let word = res.data[0].toLowerCase();
 
-  // filter bad words
   if (word.length < 4) return generateScramble();
 
   const scrambled = word
@@ -129,6 +137,24 @@ async function getUser(userId, username) {
   }
 
   return res.rows[0];
+}
+
+// ================= ECONOMY =================
+async function awardWin(userId, username, gameType) {
+  await getUser(userId, username);
+
+  const reward = GAME_REWARDS[gameType] || 1;
+
+  await pool.query(
+    `UPDATE users 
+     SET score = score + $1,
+         correct_answers = correct_answers + 1,
+         games_played = games_played + 1
+     WHERE id = $2`,
+    [reward, userId]
+  );
+
+  return reward;
 }
 
 // ================= SERVER =================
@@ -204,7 +230,9 @@ app.post(
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
             content:
-              `🧮 Math Race\n\nWhat is ${a} × ${b}?\n\n💬 Type your answer!`,
+              `🧮 Math Race\n\n` +
+              `What is **${a} × ${b}**?\n\n` +
+              `💬 Type your answer!`,
           },
         });
       }
@@ -222,7 +250,10 @@ app.post(
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
-            content: `🧠 Riddle\n\n${r.question}\n\n💬 Type your answer!`,
+            content:
+              `🧠 Riddle\n\n`+
+              `${r.question}\n\n`+
+              `💬 Type your answer!`,
           },
         });
       }
@@ -233,20 +264,29 @@ app.post(
         const choices = ['rock', 'paper', 'scissors'];
         const bot = choices[Math.floor(Math.random() * 3)];
 
-        let result =
-          userChoice === bot
-            ? "It's a tie!"
-            : (userChoice === 'rock' && bot === 'scissors') ||
-              (userChoice === 'paper' && bot === 'rock') ||
-              (userChoice === 'scissors' && bot === 'paper')
-            ? 'You win!'
-            : 'You lose!';
+        const isWin =
+          (userChoice === 'rock' && bot === 'scissors') ||
+          (userChoice === 'paper' && bot === 'rock') ||
+          (userChoice === 'scissors' && bot === 'paper');
+
+        const isTie = userChoice === bot;
+
+        let result;
+
+        if (isTie) {
+          result = "It's a tie!";
+        } else if (isWin) {
+          const reward = await awardWin(userId, username, 'rps');
+          result = `You win!\n+${reward} point 🎉`;
+        } else {
+          result = 'You lose!';
+        }
 
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
             content:
-              `✊ RPS\nYou: ${userChoice}\nBot: ${bot}\n\n${result}`,
+              `✊ Rock Paper Scissors\n\nYou: ${userChoice}\nBot: ${bot}\n\n${result}`,
           },
         });
       }
@@ -257,14 +297,14 @@ app.post(
           `SELECT username, score FROM users ORDER BY score DESC LIMIT 10`
         );
 
+        const text =
+          result.rows
+            .map((u, i) => `${i + 1}. ${u.username} - ${u.score}`)
+            .join('\n') || 'No players yet.';
+
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: {
-            content:
-              result.rows
-                .map((u, i) => `${i + 1}. ${u.username} - ${u.score}`)
-                .join('\n') || 'No players yet',
-          },
+          data: { content: `🏆 Leaderboard:\n\n${text}` },
         });
       }
 
@@ -287,7 +327,7 @@ app.post(
 
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: { content: 'Daily +5 points' },
+          data: { content: 'Daily +5 points 🎉' },
         });
       }
 
@@ -310,7 +350,7 @@ app.post(
 
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: { content: 'Weekly +25 points' },
+          data: { content: 'Weekly +25 points 🎉' },
         });
       }
 
@@ -333,7 +373,7 @@ app.post(
 
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: { content: 'Monthly +200 points' },
+          data: { content: 'Monthly +200 points 🎉' },
         });
       }
     }
@@ -350,16 +390,22 @@ client.on('messageCreate', async (message) => {
   if (game.answeredUsers.has(message.author.id)) return;
 
   const userAnswer = message.content.toLowerCase().trim();
-  const correct = game.answer.toLowerCase();
+  const correct = game.answer.toLowerCase().trim();
 
   const isCorrect = userAnswer === correct;
 
   game.answeredUsers.add(message.author.id);
 
   if (isCorrect) {
-    message.reply('✅ Correct!');
+    const reward = await awardWin(
+      message.author.id,
+      message.author.username,
+      game.type
+    );
+
+    message.reply(`✅ Correct! \n\n +${reward} points 🎉`);
   } else {
-    message.reply(`❌ Wrong! Answer: ${game.answer}`);
+    message.reply(`❌ Wrong!\n\n Answer: ${game.answer}`);
   }
 });
 
