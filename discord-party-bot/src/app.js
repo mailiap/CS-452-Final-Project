@@ -157,6 +157,36 @@ async function awardWin(userId, username, gameType) {
   return reward;
 }
 
+// ================= PEMDAS HANDLERS =================
+function evaluatePEMDAS(numbers, operators) {
+  // Convert into working arrays
+  let nums = [...numbers];
+  let ops = [...operators];
+
+  // STEP 1: handle * and /
+  for (let i = 0; i < ops.length; i++) {
+    if (ops[i] === '*' || ops[i] === '/') {
+      let result =
+        ops[i] === '*'
+          ? nums[i] * nums[i + 1]
+          : nums[i] / nums[i + 1];
+
+      nums.splice(i, 2, result);
+      ops.splice(i, 1);
+      i--;
+    }
+  }
+
+  // STEP 2: handle + and -
+  let result = nums[0];
+  for (let i = 0; i < ops.length; i++) {
+    if (ops[i] === '+') result += nums[i + 1];
+    if (ops[i] === '-') result -= nums[i + 1];
+  }
+
+  return result;
+}
+
 // ================= SERVER =================
 app.post(
   '/interactions',
@@ -216,13 +246,55 @@ app.post(
       }
 
       // ================= MATH =================
-      if (data.name === 'math') {
-        const a = Math.floor(Math.random() * 20);
-        const b = Math.floor(Math.random() * 20);
+     if (data.name === 'math') {
+        const ops = ['+', '-', '*', '/'];
+
+        const numCount = Math.floor(Math.random() * 3) + 2; // 2–4 numbers
+
+        let numbers = [];
+        let operators = [];
+
+        // generate small safe numbers
+        for (let i = 0; i < numCount; i++) {
+          numbers.push(Math.floor(Math.random() * 9) + 1);
+        }
+
+        for (let i = 0; i < numCount - 1; i++) {
+          operators.push(ops[Math.floor(Math.random() * ops.length)]);
+        }
+
+        // BUILD expression string
+        let expression = "";
+        for (let i = 0; i < numbers.length; i++) {
+          expression += numbers[i];
+          if (i < operators.length) {
+            const symbol =
+              operators[i] === '*' ? '×' :
+              operators[i] === '/' ? '÷' :
+              operators[i];
+
+            expression += ` ${symbol} `;
+          }
+        }
+
+        // ENFORCE clean division (avoid decimals)
+        let safeNumbers = [...numbers];
+
+        for (let i = 0; i < operators.length; i++) {
+          if (operators[i] === '/') {
+            if (safeNumbers[i] % safeNumbers[i + 1] !== 0) {
+              safeNumbers[i] = safeNumbers[i] * safeNumbers[i + 1];
+            }
+          }
+        }
+
+        const answer = evaluatePEMDAS(safeNumbers, operators);
 
         activeGames.set(channel_id, {
           type: 'math',
-          answer: String(a * b),
+          answer: String(answer),
+          numbers: numbers,
+          operators: operators,
           answeredUsers: new Set(),
         });
 
@@ -231,7 +303,8 @@ app.post(
           data: {
             content:
               `🧮 Math Race\n\n` +
-              `What is **${a} × ${b}**?\n\n` +
+              `What is ${expression}?\n\n` +
+              `📌 Remember: PEMDAS applies!\n` +
               `💬 Type your answer!`,
           },
         });
