@@ -43,13 +43,12 @@ Create a Discord bot that turns a server into a fun, interactive “party hub”
 | Date       | Goal |
 |-----------|------|
 | 4/9     | Draft project idea & sketches |
-| ??      | Set up tech stack (bot repo, API keys, DB) |
-| ??      | Fetch games from API & display in Discord |
-| ??       | Implement pick command & store in DB |
-| ??       | Add pick locking when game starts |
-| ??       | Scoring system & leaderboard |
-| ??     | Optional AI predictions / summaries |
-| ??     | Polish, error handling, UX tweaks |
+| 4/10      | Set up tech stack (bot repo, API keys, DB) |
+| 4/10      | Fetch games from API & display in Discord |
+| 4/11       | Implement pick command & store in DB |
+| 4/11       | Scoring system & leaderboard |
+| 4/13     | Optional AI predictions / summaries |
+| 4/15     | Polish, error handling, UX tweaks |
 
 ## 5. UX Sketch
 <img src="images/ux-sketch.png" alt="UX Sketch" height="500"/>
