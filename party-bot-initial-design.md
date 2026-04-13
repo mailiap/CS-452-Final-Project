@@ -1,4 +1,4 @@
-# Discord Sports Pick’em Bot — Initial Plan
+# Discord Party Bot — Initial Plan
 
 ## 1. Purpose & Goals
 **Purpose:**  
