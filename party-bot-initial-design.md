@@ -51,4 +51,4 @@ Create a Discord bot that turns a server into a fun, interactive “party hub”
 | 4/15     | Polish, error handling, UX tweaks |
 
 ## 5. UX Sketch
-<img src="images/ux-sketch.png" alt="UX Sketch" height="500"/>
+<img src="images/new-ux-sketch.png" alt="Party Bot UX Sketch" height="500"/>
