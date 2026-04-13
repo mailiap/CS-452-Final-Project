@@ -8,8 +8,10 @@ import {
   verifyKeyMiddleware,
 } from 'discord-interactions';
 import { Client, GatewayIntentBits } from 'discord.js';
+import riddles from './data/riddle.js';
 
 const { Pool } = pkg;
+
 const app = express();
 app.use(express.json());
 
@@ -53,15 +55,15 @@ const MONTH = 30 * DAY;
 // ================= CATEGORY MAP =================
 const categories = {
   general: 9,
-  food: 10,
-  geography: 22,
-  music: 12,
   sports: 21,
+  books: 10,
+  music: 12,
   history: 23,
+  movies: 11,
 };
 
 // ================= TRIVIA API =================
-async function generateQuestion(categoryId = 9) {
+async function generateTrivia(categoryId = 9) {
   const res = await axios.get(
     `https://opentdb.com/api.php?amount=1&type=multiple&category=${categoryId}&difficulty=easy`
   );
@@ -83,8 +85,32 @@ async function generateQuestion(categoryId = 9) {
   return {
     question: decode(q.question),
     options: options.map(decode),
-    correct: correctIndex,
+    answer: decode(q.correct_answer),
   };
+}
+
+// ================= RIDDLE API =================
+function generateRiddle() {
+  return riddles[Math.floor(Math.random() * riddles.length)];
+}
+
+// ================= SCRAMBLE API =================
+async function generateScramble() {
+  const res = await axios.get(
+    'https://random-word-api.herokuapp.com/word'
+  );
+
+  let word = res.data[0].toLowerCase();
+
+  // filter bad words
+  if (word.length < 4) return generateScramble();
+
+  const scrambled = word
+    .split('')
+    .sort(() => Math.random() - 0.5)
+    .join('');
+
+  return { word, scrambled };
 }
 
 // ================= HELPERS =================
@@ -105,30 +131,29 @@ async function getUser(userId, username) {
   return res.rows[0];
 }
 
-// ================= SLASH COMMANDS =================
+// ================= SERVER =================
 app.post(
   '/interactions',
   verifyKeyMiddleware(process.env.DISCORD_PUBLIC_KEY),
   async (req, res) => {
     const { type, data, channel_id } = req.body;
 
-    // ===== PING =====
     if (type === InteractionType.PING) {
       return res.send({ type: InteractionResponseType.PONG });
     }
 
-    // ================= COMMANDS =================
     if (type === InteractionType.APPLICATION_COMMAND) {
+      const userId = req.body.member?.user?.id;
+      const username = req.body.member?.user?.username;
 
-      // ===== TRIVIA =====
+      // ================= TRIVIA =================
       if (data.name === 'trivia') {
-        const categoryName = data.options?.[0]?.value || 'general';
-        const categoryId = categories[categoryName] || 9;
-
-        const q = await generateQuestion(categoryId);
+        const category = data.options?.[0]?.value || 'general';
+        const q = await generateTrivia(categories[category] || 9);
 
         activeGames.set(channel_id, {
-          question: q,
+          type: 'trivia',
+          answer: q.answer.toLowerCase(),
           answeredUsers: new Set(),
         });
 
@@ -136,208 +161,205 @@ app.post(
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
             content:
-              `🧠 **Trivia (${categoryName.toUpperCase()})**\n\n` +
+              `🧠 Trivia (${category.toUpperCase()})\n\n` +
               `${q.question}\n\n` +
               `💬 Type your answer!`,
           },
         });
       }
 
-      // ===== LEADERBOARD =====
+      // ================= SCRAMBLE =================
+      if (data.name === 'scramble') {
+        const s = await generateScramble();
+
+        activeGames.set(channel_id, {
+          type: 'scramble',
+          answer: s.word,
+          answeredUsers: new Set(),
+        });
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content:
+              `🧩 Word Scramble\n\n` +
+              `Unscramble: **${s.scrambled}**\n\n` +
+              `💬 Type your answer!`,
+          },
+        });
+      }
+
+      // ================= MATH =================
+      if (data.name === 'math') {
+        const a = Math.floor(Math.random() * 20);
+        const b = Math.floor(Math.random() * 20);
+
+        activeGames.set(channel_id, {
+          type: 'math',
+          answer: String(a * b),
+          answeredUsers: new Set(),
+        });
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content:
+              `🧮 Math Race\n\nWhat is ${a} × ${b}?\n\n💬 Type your answer!`,
+          },
+        });
+      }
+
+      // ================= RIDDLE =================
+      if (data.name === 'riddle') {
+        const r = generateRiddle();
+
+        activeGames.set(channel_id, {
+          type: 'riddle',
+          answer: r.answer.toLowerCase().trim(),
+          answeredUsers: new Set(),
+        });
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: `🧠 Riddle\n\n${r.question}\n\n💬 Type your answer!`,
+          },
+        });
+      }
+
+      // ================= RPS =================
+      if (data.name === 'rps') {
+        const userChoice = data.options[0].value;
+        const choices = ['rock', 'paper', 'scissors'];
+        const bot = choices[Math.floor(Math.random() * 3)];
+
+        let result =
+          userChoice === bot
+            ? "It's a tie!"
+            : (userChoice === 'rock' && bot === 'scissors') ||
+              (userChoice === 'paper' && bot === 'rock') ||
+              (userChoice === 'scissors' && bot === 'paper')
+            ? 'You win!'
+            : 'You lose!';
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content:
+              `✊ RPS\nYou: ${userChoice}\nBot: ${bot}\n\n${result}`,
+          },
+        });
+      }
+
+      // ================= LEADERBOARD =================
       if (data.name === 'leaderboard') {
         const result = await pool.query(
           `SELECT username, score FROM users ORDER BY score DESC LIMIT 10`
         );
 
-        const text =
-          result.rows
-            .map((u, i) => `${i + 1}. ${u.username} - ${u.score}`)
-            .join('\n') || 'No players yet.';
-
-        return res.send({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: { content: `🏆 Leaderboard:\n\n${text}` },
-        });
-      }
-
-      // ===== HELP =====
-      if (data.name === 'help') {
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
             content:
-              `📖 **Trivia Bot Help**\n\n` +
-
-              `**/trivia [category]**\n` +
-              `Start a trivia game\n` +
-              `Categories: general, sports, food, geography, music, history\n\n` +
-
-              `**/leaderboard**\n` +
-              `View top players\n\n` +
-
-              `**/daily**\n` +
-              `Claim daily reward (+5 points)\n\n` +
-
-              `**/weekly**\n` +
-              `Claim weekly reward (+25 points)\n\n` +
-
-              `**/monthly**\n` +
-              `Claim monthly reward (+200 points)\n\n`,
+              result.rows
+                .map((u, i) => `${i + 1}. ${u.username} - ${u.score}`)
+                .join('\n') || 'No players yet',
           },
         });
       }
 
       // ================= DAILY =================
       if (data.name === 'daily') {
-        const userId = req.body.member.user.id;
-        const username = req.body.member.user.username;
-
         const user = await getUser(userId, username);
         const last = user.last_daily ? new Date(user.last_daily).getTime() : 0;
 
         if (Date.now() - last < DAY) {
           return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: { content: `⏳ You already claimed DAILY reward!` },
+            data: { content: 'Already claimed daily reward' },
           });
         }
 
         await pool.query(
-          `
-          UPDATE users
-          SET score = score + 5,
-              last_daily = NOW(),
-              username = $2
-          WHERE id = $1
-          `,
-          [userId, username]
+          `UPDATE users SET score = score + 5, last_daily = NOW() WHERE id = $1`,
+          [userId]
         );
 
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: { content: `🎁 Daily claimed! +5 points` },
+          data: { content: 'Daily +5 points' },
         });
       }
 
       // ================= WEEKLY =================
       if (data.name === 'weekly') {
-        const userId = req.body.member.user.id;
-        const username = req.body.member.user.username;
-
         const user = await getUser(userId, username);
         const last = user.last_weekly ? new Date(user.last_weekly).getTime() : 0;
 
         if (Date.now() - last < WEEK) {
           return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: { content: `⏳ You already claimed WEEKLY reward!` },
+            data: { content: 'Already claimed weekly reward' },
           });
         }
 
         await pool.query(
-          `
-          UPDATE users
-          SET score = score + 25,
-              last_weekly = NOW(),
-              username = $2
-          WHERE id = $1
-          `,
-          [userId, username]
+          `UPDATE users SET score = score + 25, last_weekly = NOW() WHERE id = $1`,
+          [userId]
         );
 
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: { content: `🏆 Weekly claimed! +25 points` },
+          data: { content: 'Weekly +25 points' },
         });
       }
 
       // ================= MONTHLY =================
       if (data.name === 'monthly') {
-        const userId = req.body.member.user.id;
-        const username = req.body.member.user.username;
-
         const user = await getUser(userId, username);
         const last = user.last_monthly ? new Date(user.last_monthly).getTime() : 0;
 
         if (Date.now() - last < MONTH) {
           return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: { content: `⏳ You already claimed MONTHLY reward!` },
+            data: { content: 'Already claimed monthly reward' },
           });
         }
 
         await pool.query(
-          `
-          UPDATE users
-          SET score = score + 200,
-              last_monthly = NOW(),
-              username = $2
-          WHERE id = $1
-          `,
-          [userId, username]
+          `UPDATE users SET score = score + 200, last_monthly = NOW() WHERE id = $1`,
+          [userId]
         );
 
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: { content: `👑 Monthly claimed! +200 points` },
+          data: { content: 'Monthly +200 points' },
         });
       }
     }
   }
 );
 
-
 // ================= MESSAGE HANDLER =================
 client.on('messageCreate', async (message) => {
-  try {
-    if (message.author.bot) return;
+  if (message.author.bot) return;
 
-    const game = activeGames.get(message.channel.id);
-    if (!game) return;
+  const game = activeGames.get(message.channel.id);
+  if (!game) return;
 
-    const userId = message.author.id;
-    const username = message.author.username;
+  if (game.answeredUsers.has(message.author.id)) return;
 
-    if (game.answeredUsers.has(userId)) return;
+  const userAnswer = message.content.toLowerCase().trim();
+  const correct = game.answer.toLowerCase();
 
-    const userAnswer = message.content.toLowerCase().trim();
-    const correctAnswer =
-      game.question.options[game.question.correct].toLowerCase();
+  const isCorrect = userAnswer === correct;
 
-    const isCorrect =
-      userAnswer === correctAnswer ||
-      userAnswer.includes(correctAnswer);
+  game.answeredUsers.add(message.author.id);
 
-    game.answeredUsers.add(userId);
-
-    const scoreChange = isCorrect ? 10 : -1;
-
-    await pool.query(
-      `
-      UPDATE users
-      SET username = $2,
-          score = score + $3,
-          correct_answers = correct_answers + $4,
-          games_played = games_played + 1
-      WHERE id = $1
-      `,
-      [userId, username, scoreChange, isCorrect ? 1 : 0]
-    );
-
-    if (isCorrect) {
-      message.reply('✅ Correct! +10 points');
-    } else {
-      const correctAnswer =
-        game.question.options[game.question.correct];
-
-      message.reply(
-        `❌ Wrong! -1 point\n\n` +
-        `✅ Correct answer: **${correctAnswer}**`
-      );
-    }
-
-  } catch (err) {
-    console.error("🔥 Message handler error:", err);
+  if (isCorrect) {
+    message.reply('✅ Correct!');
+  } else {
+    message.reply(`❌ Wrong! Answer: ${game.answer}`);
   }
 });
 

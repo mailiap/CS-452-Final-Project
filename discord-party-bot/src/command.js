@@ -4,44 +4,48 @@ import axios from 'axios';
 const commands = [
   {
     name: 'trivia',
-    description: 'Start a trivia game',
+    description: 'Get a trivia question',
     options: [
       {
         name: 'category',
-        description: 'Choose a category',
-        type: 3, // STRING
+        type: 3,
+        description: 'Category',
         required: false,
         choices: [
           { name: 'general', value: 'general' },
           { name: 'sports', value: 'sports' },
           { name: 'books', value: 'books' },
-          { name: 'geography', value: 'geography' },
           { name: 'music', value: 'music' },
           { name: 'history', value: 'history' },
+          { name: 'movies', value: 'movies' },
         ],
       },
     ],
   },
+  { name: 'scramble', description: 'Unscramble a word' },
+  { name: 'math', description: 'Answer a math question in under 15 seconds' },
+  { name: 'riddle', description: 'Solve a riddle' },
   {
-    name: 'leaderboard',
-    description: 'Show leaderboard',
+    name: 'rps',
+    description: 'Start a rock paper scissors Game',
+    options: [
+      {
+        name: 'choice',
+        description: 'Pick rock, paper, or scissors',
+        type: 3,
+        required: true,
+        choices: [
+          { name: 'rock', value: 'rock' },
+          { name: 'paper', value: 'paper' },
+          { name: 'scissors', value: 'scissors' },
+        ],
+      },
+    ],
   },
-  {
-  "name": "daily",
-  "description": "Claim daily reward"
-  },
-  {
-    "name": "weekly",
-    "description": "Claim weekly reward"
-  },
-  {
-    "name": "monthly",
-    "description": "Claim monthly reward"
-  },
-  {
-    "name": "help",
-    "description": "Show commands and usage"
-  }
+  { name: 'leaderboard', description: 'Show leaderboard' },
+  { name: 'daily', description: 'Claim daily rewards' },
+  { name: 'weekly', description: 'Claim weekly rewards' },
+  { name: 'monthly', description: 'Claim monthly rewards' },
 ];
 
 async function register() {
