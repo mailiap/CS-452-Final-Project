@@ -2,8 +2,7 @@
 
 ## 1. Purpose & Goals
 **Purpose:**  
-This project is a Discord Game Hub Bot that allows users in a server to play multiple mini-games directly in chat. 
-Instead of being a single-purpose bot, this bot creates a centralized gaming experience inside Discord.
+This project is a Discord Game Hub Bot that allows users in a server to play multiple mini-games directly in chat. Instead of being a single-purpose bot, this bot creates a centralized gaming experience inside Discord.    
 
 **Goals:**  
 - Create a fun, interactive experience inside Discord servers
@@ -12,7 +11,7 @@ Instead of being a single-purpose bot, this bot creates a centralized gaming exp
 - Use APIs to generate dynamic content
 - Build a scalable system that can easily add more games
 
-## 2. Initial ERD (Entity Relationship Diagram)
+## 2. ERD (Entity Relationship Diagram)
 **CURRENT ERD**  
 
 <img src="images/new-erd-sketch.png" alt="Party Bot ERD Sketch" width="300"/>
@@ -27,7 +26,7 @@ Instead of being a single-purpose bot, this bot creates a centralized gaming exp
 ★ Users (1) → (Many) Game_Stats  
 ★ Users (1) → (Many) Games   
 
-## 3. Rough System Design
+## 3. System Design
 **Overview:**  
 - Discord bot interacts with users  
 - Trivia API provides question and answer data  
@@ -36,14 +35,14 @@ Instead of being a single-purpose bot, this bot creates a centralized gaming exp
 
 <img src="images/new-system-design-diagram.png" alt="Party Bot System Diagram" height="500"/>
 
-★ User → user input `/trivia sports` 
-★ Discord Server → sends a request to endpoint `POST /interactions`
-★ Express Server → receives request, verifies it, checks command type
-★ Game Logic → `if (data.name === 'trivia') {generateQuestion()}` 
-★ APIs → bot calls APIs  `Your Server → API → returns question`
-★ Database → used for storing scores, tracking rewards, and leaderboard  
-★ Response → server sends `Bot → Discord → User sees message` 
-★ Discord → user sees message 
+★ **User** → user input `/trivia sports`   
+★ **Discord Server** → sends a request to endpoint `POST /interactions`    
+★ **Express Server** → receives request, verifies it, checks command type   
+★ **Database** → used for storing scores, tracking rewards, and leaderboard    
+★ **APIs** → bot calls APIs  `Your Server → API → returns question`  
+★ **Game Logic** → `if (data.name === 'trivia') {generateQuestion()}`   
+★ **Response** → server sends `Bot → Discord → User sees message`   
+★ **Discord** → user sees message   
 
 ## 4. Initial Daily Goals (March 27 – End of Class)
 | Date       | Goal |
