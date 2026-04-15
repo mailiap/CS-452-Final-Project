@@ -30,18 +30,20 @@ Instead of being a single-purpose bot, this bot creates a centralized gaming exp
 ## 3. Rough System Design
 **Overview:**  
 - Discord bot interacts with users  
-- Sports API provides game data  
-- Database stores users, picks, and scores  
-- Optional Redis cache for live data  
-- Optional AI service for predictions  
+- Trivia API provides question and answer data  
+- Scramble API provides words to unscramble
+- Database stores users, tracking rewards, and leaderboard scores  
 
 <img src="images/new-system-design-diagram.png" alt="Party Bot System Diagram" height="500"/>
 
-★ Discord Bot → central piece, handles commands and messages  
-★ Database → stores users, picks, scores  
-★ Sports API → gets games, results  
-★ AI Service → optional predictions or summaries  
-★ Redis → optional cache for fast access
+★ User → user input `/trivia sports` 
+★ Discord Server → sends a request to endpoint `POST /interactions`
+★ Express Server → receives request, verifies it, checks command type
+★ Game Logic → `if (data.name === 'trivia') {generateQuestion()}` 
+★ APIs → bot calls APIs  `Your Server → API → returns question`
+★ Database → used for storing scores, tracking rewards, and leaderboard  
+★ Response → server sends `Bot → Discord → User sees message` 
+★ Discord → user sees message 
 
 ## 4. Initial Daily Goals (March 27 – End of Class)
 | Date       | Goal |
