@@ -13,17 +13,19 @@ Instead of being a single-purpose bot, this bot creates a centralized gaming exp
 - Build a scalable system that can easily add more games
 
 ## 2. Initial ERD (Entity Relationship Diagram)
-Right now:
-- Everything is stored in **Users**
-- No seperate tables yet
-  
-<img src="images/new-erd-sketch.png" alt="Party Bot ERD Sketch" width="700"/>
+**CURRENT ERD**  
 
-**FUTURE ERD**
-★ Users (1) → (Many) Game_Stats 
-★ Users (1) → (Many) Games  
+<img src="images/new-erd-sketch.png" alt="Party Bot ERD Sketch" width="300"/>
 
-<img src="images/future-erd-sketch.png" alt="Future Party Bot ERD Sketch" width="700"/>
+★ Everything is stored in **Users**    
+★ No seperate tables yet
+
+**FUTURE ERD**  
+
+<img src="images/future-erd-sketch.png" alt="Future Party Bot ERD Sketch" width="500"/>  
+
+★ Users (1) → (Many) Game_Stats  
+★ Users (1) → (Many) Games   
 
 ## 3. Rough System Design
 **Overview:**  
@@ -33,7 +35,7 @@ Right now:
 - Optional Redis cache for live data  
 - Optional AI service for predictions  
 
-<img src="images/new-system-design-diagram.png" alt="Party Bot System Diagram" height="300"/>
+<img src="images/new-system-design-diagram.png" alt="Party Bot System Diagram" height="500"/>
 
 ★ Discord Bot → central piece, handles commands and messages  
 ★ Database → stores users, picks, scores  
