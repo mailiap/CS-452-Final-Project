@@ -45,16 +45,15 @@ This project is a Discord Game Hub Bot that allows users in a server to play mul
 ★ **Discord** → user sees message   
 
 ## 4. Initial Daily Goals (March 27 – End of Class)
-| Date       | Goal |
+| Date      | Goal |
 |-----------|------|
-| 3/27      | Draft project idea & sketches (completed) |
-| 3/30      | Set up tech stack (bot repo, API keys, DB) |
-| 3/31      | Fetch games from API & display in Discord |
-| 4/2       | Implement pick command & store in DB |
-| 4/6       | Add pick locking when game starts |
-| 4/7       | Scoring system & leaderboard |
-| 4/10      | Optional AI predictions / summaries |
-| 4/13      | Polish, error handling, UX tweaks |
+| 4/8       | Set up Discord bot + server + tech stack (bot repo, API keys, DB)|
+| 4/9       | Add base layer for each game + Discord commands |
+| 4/10      | Fetch data from APIs & display in Discord |
+| 4/11      | Improve each game handling system |
+| 4/13      | Add daily/ weekly/ monthly reward system |
+| 4/14      | Scoring system & leaderboard |
+| 4/15      | Fix last minute bugs + UI designs |
 
 ## 5. UX Sketch
-<img src="images/ux-sketch.png" alt="UX Sketch" height="500"/>
+<img src="images/new-ux-sketch.png" alt="New UX Sketch" height="500"/>
