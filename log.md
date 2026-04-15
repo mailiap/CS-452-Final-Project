@@ -21,4 +21,6 @@
 |           | Debugged, refined, and finalized `riddle` game functionality                                    | 2     |
 | 4/13/2026 | Introduced multi-operation questions (PEMDAS structure)                                         | 2.5   |
 |           | Debugged, refined, and finalized `math` game functionality                                      | 1.5   |
-| **Total** |                                                                                                 | 34    |
+| 4/14/2026 | Completed new project idea and system design concepts                                           | .5    |
+|           | Implemented a scoring and points tracking system across all games                               | 2.5   |
+| **Total** |                                                                                                 | 37    |
