@@ -1,33 +1,130 @@
-# Discord Party Game Bot
+# Discord Game Hub Bot
 
-## Overview
-A social Discord bot where users can participate in fun party-style games, challenges, and activities to earn points, level up, and compete on a server leaderboard. Think of it as a mix of mini-games, engagement rewards, and social interaction all inside Discord.
-
----
-
-## Technology
-- Discord bot (Node.js or Python)
-- Database (PostgreSQL or MongoDB) for users, points, and stats
-- Optional Redis for caching cooldowns and daily/weekly/monthly resets
-- External APIs for trivia questions
+A Discord bot that turns your server into a mini game hub 
+Play trivia, word scramble, math games, riddles, and more directly in chat.
 
 ---
 
-## Goals
-- Provide daily, weekly, and monthly activities users can participate in
-- Allow users to earn points through games, trivia, and challenges
-- Enforce cooldowns (daily/weekly/monthly limits) for certain commands
-- Track user scores and maintain a live leaderboard
-- Include fun party-style commands (games, trivia, random challenges, etc.)
+## Features
+
+### Mini Games
+- 🧠 Trivia (multiple categories)
+- 🧩 Word Scramble
+- 🧮 Math Race
+- 🧠 Riddles
+- ✊ Rock Paper Scissors
+
+### Systems
+- Leaderboard
+- Daily / Weekly / Monthly rewards
+- Persistent scoring (PostgreSQL)
+- Multi-game support
 
 ---
 
-## Why This Project?
-I enjoy building interactive Discord communities and wanted to create something that makes servers more fun and engaging. This project helps me gain experience with:
-- Discord bot development
-- Working with databases and user state tracking
-- Cooldown and reward systems (game design logic)
-- API integration and dynamic content
-- Building social and engagement-based applications
+## 🤖 Add This Bot to Your Server
+
+### 👉 Invite Link
+
+Click below to add the bot:
+
+```
+https://discord.com/oauth2/authorize?client_id=1491559333035511908
+```
 
 ---
+
+### Steps
+
+1. Click the invite link above  
+2. Select your Discord server  
+3. Click **Continue**  
+4. Click **Authorize**  
+5. Done
+
+---
+
+### Try These Commands
+
+Once added, use:
+
+- `/trivia`
+- `/scramble`
+- `/math`
+- `/riddle`
+- `/rps`
+- `/leaderboard`
+- `/daily`
+- `/weekly`
+- `/monthly`
+
+---
+
+## Local Setup (Optional)
+
+If you want to run the bot yourself:
+
+### 1. Clone the repo
+```bash
+git clone https://github.com/mailiap/your-repo.git
+cd your-repo
+```
+
+### 2. Install dependencies
+```bash
+npm install
+```
+
+### 3. Create `.env` file
+```env
+DISCORD_BOT_TOKEN=your_bot_token
+DISCORD_PUBLIC_KEY=your_public_key
+APP_ID=your_app_id
+DATABASE_URL=your_database_url
+```
+
+### 4. Register commands
+```bash
+npm run register
+```
+
+### 5. Start the bot
+```bash
+npm run start
+```
+
+---
+
+## How It Works
+
+- Discord sends commands to your server
+- Express handles requests
+- Game logic runs mini-games
+- APIs provide dynamic content
+- PostgreSQL stores user data
+
+---
+
+## Tech Stack
+
+- Node.js
+- Express
+- Discord API
+- PostgreSQL
+- Axios
+
+---
+
+## Future Improvements
+
+- Player profiles
+- XP + leveling system
+- Multiplayer battles
+- Game lobbies
+- Shop / power-ups
+
+---
+
+## License
+
+This project is for educational use.
