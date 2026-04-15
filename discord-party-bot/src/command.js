@@ -61,7 +61,7 @@ async function register() {
       }
     );
 
-    console.log('✅ Commands registered!');
+    console.log('Commands registered!');
   } catch (err) {
     console.error(err.response?.data || err.message);
   }
