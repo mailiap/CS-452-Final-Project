@@ -21,14 +21,7 @@ This project is a Discord Game Hub Bot that allows users to play multiple mini-g
 
 ## Demo
 
-👉 Insert your demo link here  
-Example:
-- https://your-demo-link.com
-
-OR embed a GIF:
-```md
-![Demo](./demo.gif)
-```
+- https://youtu.be/pHBlwWelC48
 
 ---
 
