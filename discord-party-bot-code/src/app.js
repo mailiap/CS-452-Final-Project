@@ -106,7 +106,7 @@ function generateRiddle() {
 // ================= SCRAMBLE =================
 async function generateScramble() {
   const res = await axios.get(
-    'https://random-word-api.herokuapp.com/word?diff=1'
+    'https://random-word-api.herokuapp.com/word?diff=1&length=5'
   );
 
   let word = res.data[0].toLowerCase();
@@ -389,7 +389,7 @@ app.post(
         if (Date.now() - last < DAY) {
           return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: { content: 'Already claimed daily reward' },
+            data: { content: '⚠️ Already claimed daily reward ⚠️' },
           });
         }
 
@@ -412,7 +412,7 @@ app.post(
         if (Date.now() - last < WEEK) {
           return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: { content: 'Already claimed weekly reward' },
+            data: { content: '⚠️ Already claimed weekly reward ⚠️' },
           });
         }
 
@@ -435,7 +435,7 @@ app.post(
         if (Date.now() - last < MONTH) {
           return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: { content: 'Already claimed monthly reward' },
+            data: { content: '⚠️ Already claimed monthly reward ⚠️' },
           });
         }
 
