@@ -23,6 +23,10 @@ This project is a Discord Game Hub Bot that allows users to play multiple mini-g
 
 <img src="images/Discord-Party-Bot-Demo-Final.gif" alt="Party Bot System Diagram" height="500"/>
 
+ ### Full Demo Video
+
+- https://youtu.be/pHBlwWelC48
+
 
 ---
 
